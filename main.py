@@ -1,42 +1,21 @@
 import uvicorn
-import slowapi
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.errors import RateLimitExceeded
-from fastapi.staticfiles import StaticFiles
-import uvicorn, os
-from sqlalchemy.exc import IntegrityError
-from fastapi import HTTPException, Request
-from fastapi.templating import Jinja2Templates
-from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from collections import defaultdict
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, status
-from fastapi.staticfiles import StaticFiles
+from fastapi import HTTPException, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from starlette.requests import Request
+from sqlalchemy.exc import IntegrityError
 from starlette.middleware.sessions import SessionMiddleware  # required by google oauth
-from slowapi import Limiter
-from slowapi.util import get_remote_address
-from api.utils.logger import logger
-from api.utils.success_response import success_response
-from api.v1.routes import api_version_one
-from api.core.settings import settings
 from starlette.middleware.base import BaseHTTPMiddleware
-from slowapi.middleware import SlowAPIMiddleware
-from collections import defaultdict
-from slowapi.errors import RateLimitExceeded
-from scripts.presets import (
-    load_avatars_in_db,
-    load_audio_in_db,
-    load_billing_plans_in_db,
-)
+
+from api.core.config import config
+from api.utils.logger import logger
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    load_avatars_in_db()
-    load_audio_in_db()
-    load_billing_plans_in_db()
     yield
 
 
@@ -62,48 +41,18 @@ app.add_middleware(RequestCountMiddleware)
 # Endpoint to get request stats
 @app.get("/request-stats", response_class=JSONResponse)
 async def get_request_stats():
-    return success_response(
+    return JSONResponse(
         status_code=status.HTTP_200_OK,
-        message="endpoints request retreived successfully",
-        data={
+        content={
             "request_counts": {
                 endpoint: dict(ips) for endpoint, ips in request_counter.items()
-            }
+            },
+            "message": "endpoints request retreived successfully",
         },
     )
 
 
-# Initialize the limiter
-limiter = Limiter(key_func=get_remote_address)
-
-# Register the rate limit exceeded handler
-app.state.limiter = limiter
-app.add_exception_handler(
-    RateLimitExceeded,
-    lambda request, exc: JSONResponse(
-        {"detail": "Rate limit exceeded"}, status_code=429
-    ),
-)
-app.add_middleware(SlowAPIMiddleware)
-
-# Set up email templates and css static files
-email_templates = Jinja2Templates(directory="api/core/dependencies/email/templates")
-
-MEDIA_DIR = "./media"
-os.makedirs(MEDIA_DIR, exist_ok=True)
-
-TEMP_DIR = "./tmp/media"
-os.makedirs(TEMP_DIR, exist_ok=True)
-
-# Load up media static files
-app.mount("/media", StaticFiles(directory=MEDIA_DIR), name="media")
-app.mount("/tmp/media", StaticFiles(directory=TEMP_DIR), name="tmp-media")
-app.mount("/presets", StaticFiles(directory="./presets"), name="presets")
-
-origins = ["http://localhost:3000", "http://localhost:3001", "https://staging.tifi.tv"]
-
-
-app.add_middleware(SessionMiddleware, secret_key=settings.SECRET_KEY)
+app.add_middleware(SessionMiddleware, secret_key=config.SECRET_KEY)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -112,13 +61,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(api_version_one)
-
 
 @app.get("/", tags=["Home"])
 async def get_root(request: Request) -> dict:
-    return success_response(
-        message="Welcome to API", status_code=status.HTTP_200_OK, data={"URL": ""}
+    return JSONResponse(
+        status_code=status.HTTP_200_OK, content={"URL": "", "message": "Welcome to API"}
     )
 
 

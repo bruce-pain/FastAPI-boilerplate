@@ -2,15 +2,15 @@
 
 from sqlalchemy.orm import sessionmaker, scoped_session, declarative_base
 from sqlalchemy import create_engine
-from api.core.settings import settings, BASE_DIR
+from api.core.config import config, BASE_DIR
 
 
-DB_HOST = settings.DB_HOST
-DB_PORT = settings.DB_PORT
-DB_USER = settings.DB_USER
-DB_PASSWORD = settings.DB_PASSWORD
-DB_NAME = settings.DB_NAME
-DB_TYPE = settings.DB_TYPE
+DB_HOST = config.DB_HOST
+DB_PORT = config.DB_PORT
+DB_USER = config.DB_USER
+DB_PASSWORD = config.DB_PASSWORD
+DB_NAME = config.DB_NAME
+DB_TYPE = config.DB_TYPE
 
 
 def get_db_engine(test_mode: bool = False):
