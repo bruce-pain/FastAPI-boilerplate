@@ -10,7 +10,7 @@ from sqlalchemy.exc import IntegrityError
 from starlette.middleware.sessions import SessionMiddleware  # required by google oauth
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from api.core.config import config
+from api.core.config import settings
 from api.utils.logger import logger
 
 
@@ -52,7 +52,7 @@ async def get_request_stats():
     )
 
 
-app.add_middleware(SessionMiddleware, secret_key=config.SECRET_KEY)
+app.add_middleware(SessionMiddleware, secret_key=settings.SECRET_KEY)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

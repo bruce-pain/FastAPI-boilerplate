@@ -33,7 +33,7 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_SECRET: str
 
     @property
-    def database_url(self):
+    def database_url(self) -> str:
         """Dynamically construct DATABASE_URL"""
         return f"{self.DATABASE_TYPE}://{self.DATABASE_USER}:{self.DATABASE_PASSWORD}@{self.DATABASE_HOST}:{self.DATABASE_PORT}/{self.DATABASE_NAME}"
 
