@@ -23,6 +23,7 @@ markdown-it-py==3.0.0
 MarkupSafe==2.1.5
 mdurl==0.1.2
 orjson==3.10.7
+psycopg2-binary==2.9.9
 pycparser==2.22
 pydantic==2.9.1
 pydantic-extra-types==2.9.0
@@ -41,6 +42,7 @@ starlette==0.38.5
 typer==0.12.5
 typing_extensions==4.12.2
 ujson==5.10.0
+uuid7==0.1.0
 uvicorn==0.30.6
 uvloop==0.20.0
 watchfiles==0.24.0

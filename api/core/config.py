@@ -25,9 +25,9 @@ class Settings(BaseSettings):
     DATABASE_TYPE: str
 
     # Directories
-    MEDIA_DIR = os.path.join(BASE_DIR, "media")
-    STATIC_DIR = os.path.join(BASE_DIR, "static")
-    TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
+    MEDIA_DIR: str = os.path.join(BASE_DIR, "media")
+    STATIC_DIR: str = os.path.join(BASE_DIR, "static")
+    TEMPLATES_DIR: str = os.path.join(BASE_DIR, "templates")
 
     GOOGLE_CLIENT_ID: str
     GOOGLE_CLIENT_SECRET: str
