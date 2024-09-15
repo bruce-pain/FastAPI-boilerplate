@@ -1,10 +1,10 @@
-from jose import JWTError, jwt
 from datetime import datetime, timedelta
-from fastapi import HTTPException
-from pydantic import BaseModel
 from typing import Optional
 
 from api.core.config import settings
+from fastapi import HTTPException
+from jose import JWTError, jwt
+from pydantic import BaseModel
 
 
 class TokenData(BaseModel):
@@ -13,30 +13,34 @@ class TokenData(BaseModel):
     id = Optional[str]
 
 
-def create_access_token(user_id: str) -> str:
+def create_jwt_token(token_type: str, user_id: str) -> str:
     """Function to create an access token"""
 
-    expire = datetime.utcnow() + timedelta(hours=settings.ACCESS_TOKEN_EXPIRY)
-    data = {"user_id": user_id, "exp": expire, "type": "access"}
+    expiry_period = {
+        "access": settings.ACCESS_TOKEN_EXPIRY,
+        "refresh": settings.REFRESH_TOKEN_EXPIRY,
+    }
+
+    if token_type not in expiry_period.keys():
+        raise ValueError("token_type should be 'access' or 'refresh'")
+
+    expire = datetime.utcnow() + timedelta(hours=expiry_period[token_type])
+    data = {"user_id": user_id, "exp": expire, "type": token_type}
     encoded_jwt = jwt.encode(data, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return encoded_jwt
 
 
-def verify_access_token(access_token: str, credentials_exception):
-    """Funtcion to decode and verify access token"""
+def verify_jwt_token(token: str, credentials_exception: HTTPException) -> TokenData:
+    """Funtcion to decode and verify access and refresh tokens"""
 
     try:
         payload = jwt.decode(
-            access_token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
+            token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
         )
         user_id = payload.get("user_id")
-        token_type = payload.get("type")
 
         if user_id is None:
             raise credentials_exception
-
-        if token_type == "refresh":
-            raise HTTPException(detail="Refresh token not allowed", status_code=400)
 
         token_data = TokenData(id=user_id)
 
