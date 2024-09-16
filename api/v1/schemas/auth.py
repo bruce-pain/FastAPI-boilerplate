@@ -16,10 +16,6 @@ class LoginRequest(BaseModel):
     password: str
 
 
-class Token(BaseModel):
-    token: str
-
-
 class AuthResponseData(BaseModel):
     id: str
     email: EmailStr
@@ -28,6 +24,6 @@ class AuthResponseData(BaseModel):
 
 
 class AuthResponse(BaseResponseModel):
-    access_token: Token
-    refresh_token: Token
+    access_token: str
+    refresh_token: str
     data: AuthResponseData

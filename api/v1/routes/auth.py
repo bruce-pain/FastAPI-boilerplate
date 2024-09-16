@@ -19,8 +19,8 @@ auth = APIRouter(prefix="/auth", tags=["Authentication"])
     path="/register",
     status_code=status.HTTP_201_CREATED,
     response_model=auth_schema.AuthResponse,
-    description="Create a new user account",
-    summary="This endpoint takes in the user creation details and returns jwt tokens along with user data",
+    summary="Create a new user account",
+    description="This endpoint takes in the user creation details and returns jwt tokens along with user data",
     tags=["Authentication"],
 )
 def register(
@@ -54,8 +54,9 @@ def register(
     path="/login",
     status_code=status.HTTP_200_OK,
     response_model=auth_schema.AuthResponse,
-    description="Login a registered user",
-    summary="This endpoint retrieves the jwt tokens for a registered user",
+    summary="Login a registered user",
+    description="This endpoint retrieves the jwt tokens for a registered user",
+    tags=["Authentication"],
 )
 def login(
     schema: auth_schema.LoginRequest,
