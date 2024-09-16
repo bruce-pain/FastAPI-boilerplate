@@ -38,7 +38,10 @@ def register(
     refresh_token = jwt_helpers.create_jwt_token("refresh", user.id)
 
     response_data = auth_schema.AuthResponseData(
-        id=user.id, email="", first_name="", last_name=""
+        id=user.id,
+        email=user.email,
+        first_name=user.first_name,
+        last_name=user.last_name,
     )
 
     return auth_schema.AuthResponse(
@@ -76,7 +79,10 @@ def login(
     refresh_token = jwt_helpers.create_jwt_token("refresh", user.id)
 
     response_data = auth_schema.AuthResponseData(
-        id=user.id, email="", first_name="", last_name=""
+        id=user.id,
+        email=user.email,
+        first_name=user.first_name,
+        last_name=user.last_name,
     )
 
     return auth_schema.AuthResponse(
