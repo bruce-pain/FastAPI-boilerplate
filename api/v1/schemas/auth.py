@@ -6,7 +6,7 @@ from api.v1.schemas.base_schema import BaseResponseModel
 
 class RegisterRequest(BaseModel):
     email: EmailStr
-    password: str
+    password: Optional[str] = None
     first_name: Annotated[str, StringConstraints(max_length=70)]
     last_name: Annotated[str, StringConstraints(max_length=70)]
 
