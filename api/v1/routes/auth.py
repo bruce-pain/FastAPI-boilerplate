@@ -9,8 +9,10 @@ from typing import Annotated
 from api.core import response_messages
 from api.db.database import get_db
 from api.utils import jwt_helpers
+from api.core.dependencies.security import get_current_user
 from api.v1.schemas import auth as auth_schema
 from api.v1.services import auth as auth_service
+from api.v1.models import User
 
 auth = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -27,7 +29,12 @@ def register(
     schema: auth_schema.RegisterRequest,
     db: Annotated[Session, Depends(get_db)],
 ):
-    """Endpoint for a user to register their account"""
+    """Endpoint for a user to register their account
+
+    Args:
+    schema (auth_schema.LoginRequest): Login request schema
+    db (Annotated[Session, Depends): Database session
+    """
 
     # Create user account
 
@@ -92,3 +99,14 @@ def login(
         refresh_token=refresh_token,
         data=response_data,
     )
+
+
+@auth.get("/greet/user")
+def greet(current_user: Annotated[User, Depends(get_current_user)]):
+    """Protected route to greet the current user
+
+    Args:
+        current_user (Annotated[User, Depends): The currently logged in user
+    """
+
+    return {"greeting": f"Hello, {current_user.first_name}!"}
