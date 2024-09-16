@@ -5,6 +5,7 @@ from fastapi import HTTPException
 from jose import JWTError, jwt
 from api.v1.schemas.auth import TokenData
 
+
 def create_jwt_token(token_type: str, user_id: str) -> str:
     """Function to create an access token"""
 
@@ -22,21 +23,19 @@ def create_jwt_token(token_type: str, user_id: str) -> str:
     return encoded_jwt
 
 
-def verify_jwt_token(token: str, credentials_exception: HTTPException) -> TokenData:
+def verify_jwt_token(token: str, credentials_exception: HTTPException) -> str:
     """Funtcion to decode and verify access and refresh tokens"""
 
     try:
         payload = jwt.decode(
             token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
         )
-        user_id = payload.get("user_id")
+        user_id: str = payload.get("user_id")
 
         if user_id is None:
             raise credentials_exception
 
-        token_data = TokenData(id=user_id)
-
     except JWTError:
         raise credentials_exception
 
-    return token_data
+    return user_id
