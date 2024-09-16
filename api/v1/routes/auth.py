@@ -1,8 +1,6 @@
 from fastapi import (
     APIRouter,
     Depends,
-    Request,
-    Response,
     status,
 )
 from sqlalchemy.orm import Session

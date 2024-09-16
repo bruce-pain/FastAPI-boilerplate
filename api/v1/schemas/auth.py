@@ -19,6 +19,7 @@ class LoginRequest(BaseModel):
 class Token(BaseModel):
     token: str
 
+
 class AuthResponseData(BaseModel):
     id: str
     email: EmailStr
@@ -30,9 +31,3 @@ class AuthResponse(BaseResponseModel):
     access_token: Token
     refresh_token: Token
     data: AuthResponseData
-
-
-class TokenData(BaseModel):
-    """schema to structure token data"""
-
-    id = Optional[str]

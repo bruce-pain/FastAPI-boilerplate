@@ -12,6 +12,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 from api.core.config import settings
 from api.utils.logger import logger
+from api.v1.routes.main import main_router
 
 
 @asynccontextmanager
@@ -36,6 +37,7 @@ class RequestCountMiddleware(BaseHTTPMiddleware):
 
 
 app.add_middleware(RequestCountMiddleware)
+app.include_router(main_router)
 
 
 # Endpoint to get request stats

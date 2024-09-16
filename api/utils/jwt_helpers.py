@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from api.core.config import settings
 from fastapi import HTTPException
 from jose import JWTError, jwt
-from api.v1.schemas.auth import TokenData
 
 
 def create_jwt_token(token_type: str, user_id: str) -> str:
