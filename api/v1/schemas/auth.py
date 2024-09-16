@@ -27,9 +27,9 @@ class AuthResponseData(BaseModel):
 
 
 class AuthResponse(BaseResponseModel):
-    data: AuthResponseData
     access_token: Token
     refresh_token: Token
+    data: AuthResponseData
 
 
 class TokenData(BaseModel):

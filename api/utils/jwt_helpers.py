@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-from typing import Optional
 
 from api.core.config import settings
 from fastapi import HTTPException
