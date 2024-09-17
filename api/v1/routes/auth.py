@@ -100,15 +100,27 @@ def login(
     )
 
 
-@auth.get("/google")
-async def login_google(request: Request):
+@auth.get(
+    path="/google",
+    summary="Initiate Google auth flow",
+    description="This endpoint starts the google oauth process",
+    tags=["Authentication"],
+)
+async def google_init(request: Request):
     return await auth_service.oauth.google.authorize_redirect(
         request, settings.GOOGLE_REDIRECT_URL
     )
 
 
-@auth.get("/callback/google")
-async def auth_google(request: Request, db: Annotated[Session, Depends(get_db)]):
+@auth.get(
+    path="/callback/google",
+    response_model=auth_schema.AuthResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Gooogle auth redirect",
+    description="After the google login, the user will be redirected to this endpoint, which returns user data and tokens",
+    tags=["Authentication"],
+)
+async def google_callback(request: Request, db: Annotated[Session, Depends(get_db)]):
     try:
         user_response: OAuth2Token = (
             await auth_service.oauth.google.authorize_access_token(request)
@@ -146,6 +158,32 @@ async def auth_google(request: Request, db: Annotated[Session, Depends(get_db)])
         access_token=access_token,
         refresh_token=refresh_token,
         data=response_data,
+    )
+
+
+@auth.post(
+    path="/token/refresh",
+    response_model=auth_schema.TokenRefreshResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Refresh tokens",
+    description="This endpoint uses the current refresh token to create new access and refresh tokens",
+    tags=["Authentication"],
+)
+def refresh_token(schema: auth_schema.TokenRefreshRequest):
+    """Endpoint to refresh the access token
+
+    Args:
+        schema (auth_schema.TokenRefreshRequest): Refresh Token Schema
+
+    Returns:
+        _type_: Refresh Token Response
+    """
+    token = jwt_helpers.refresh_access_token(refresh_token=schema.refresh_token)
+
+    return auth_schema.TokenRefreshResponse(
+        status_code=status.HTTP_200_OK,
+        message=response_messages.TOKEN_REFRESH_SUCCESSFUL,
+        access_token=token,
     )
 
 

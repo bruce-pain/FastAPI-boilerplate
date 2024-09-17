@@ -20,7 +20,7 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(lifespan=lifespan, title="Convey API")
+app = FastAPI(lifespan=lifespan, title="Boilerplate")
 
 # In-memory request counter by endpoint and IP address
 request_counter = defaultdict(lambda: defaultdict(int))
@@ -67,7 +67,8 @@ app.add_middleware(
 @app.get("/", tags=["Home"])
 async def get_root(request: Request) -> dict:
     return JSONResponse(
-        status_code=status.HTTP_200_OK, content={"URL": "", "message": "Welcome to API"}
+        status_code=status.HTTP_200_OK,
+        content={"URL": "", "message": "Welcome to the boilerplate API"},
     )
 
 
