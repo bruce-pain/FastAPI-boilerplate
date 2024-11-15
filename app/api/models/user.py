@@ -2,7 +2,7 @@
 
 from sqlalchemy import Column, String, Boolean
 from sqlalchemy.orm import relationship
-from app.api.models.base_model import BaseTableModel
+from app.core.base.model import BaseTableModel
 
 
 class User(BaseTableModel):
@@ -12,9 +12,6 @@ class User(BaseTableModel):
     password = Column(String, nullable=True)
     first_name = Column(String)
     last_name = Column(String)
-
-    profile = relationship("Profile", back_populates="user", uselist=False)
-    activity_logs = relationship("ActivityLog", back_populates="user")
 
     def to_dict(self):
         obj_dict = super().to_dict()

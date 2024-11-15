@@ -1,7 +1,7 @@
 from typing import Annotated, Optional
 
 from pydantic import BaseModel, EmailStr, StringConstraints
-from app.api.schemas.base_schema import BaseResponseModel
+from app.core.base.schema import BaseResponseModel
 
 
 class RegisterRequest(BaseModel):
