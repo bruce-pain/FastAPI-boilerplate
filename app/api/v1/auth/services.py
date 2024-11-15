@@ -3,11 +3,11 @@ from sqlalchemy.orm import Session
 from starlette.config import Config
 from authlib.integrations.starlette_client import OAuth
 
-from api.utils import password_utils
-from api.core import response_messages
-from api.core.config import settings
-from api.v1.schemas import auth as auth_schema
-from api.v1.models.user import User
+from app.utils import password_utils
+from app.core import response_messages
+from app.core.config import settings
+from app.api.v1.auth import schemas
+from app.api.models.user import User
 
 
 config_data = {
@@ -26,12 +26,12 @@ oauth.register(
 )
 
 
-def register(db: Session, schema: auth_schema.RegisterRequest) -> User:
+def register(db: Session, schema: schemas.RegisterRequest) -> User:
     """Creates a new user
 
     Args:
         db (Session): Database Session
-        schema (auth_schema.RegisterRequest): Registration schema
+        schema (schemas.RegisterRequest): Registration schema
 
     Returns:
         User: User object for the newly created user
@@ -56,12 +56,12 @@ def register(db: Session, schema: auth_schema.RegisterRequest) -> User:
     return user
 
 
-def google_register(db: Session, schema: auth_schema.RegisterRequest) -> User:
+def google_register(db: Session, schema: schemas.RegisterRequest) -> User:
     """Create a new user from google login
 
     Args:
         db (Session): Database Session
-        schema (auth_schema.RegisterRequest): Registration schema
+        schema (schemas.RegisterRequest): Registration schema
 
     Returns:
         User: User object for newly created user
@@ -82,12 +82,12 @@ def google_register(db: Session, schema: auth_schema.RegisterRequest) -> User:
     return user
 
 
-def authenticate(db: Session, schema: auth_schema.LoginRequest) -> User:
+def authenticate(db: Session, schema: schemas.LoginRequest) -> User:
     """Authenticates a registered user
 
     Args:
         db (Session): Database Session
-        schema (auth_schema.LoginRequest): Login Request schema
+        schema (schemas.LoginRequest): Login Request schema
 
     Returns:
         User: Authenticated user

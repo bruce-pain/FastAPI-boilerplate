@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
-from api.core.config import settings
-from api.core import response_messages
+from app.core.config import settings
+from app.core import response_messages
 from fastapi import HTTPException
 from jose import JWTError, jwt
 

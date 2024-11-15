@@ -5,9 +5,9 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from api.core.config import settings
-from api.db.database import Base
-from api.v1.models import *
+from app.core.config import settings
+from app.db.database import Base
+from app.api.models import *
 
 DATABASE_URL = settings.database_url
 

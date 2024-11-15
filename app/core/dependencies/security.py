@@ -3,10 +3,10 @@ from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import Annotated
 
-from api.v1.models.user import User
-from api.db.database import get_db
-from api.utils.jwt_helpers import verify_jwt_token
-from api.core import response_messages
+from app.api.models.user import User
+from app.db.database import get_db
+from app.utils.jwt_helpers import verify_jwt_token
+from app.core import response_messages
 
 
 oauth_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")

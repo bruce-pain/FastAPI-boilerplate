@@ -10,9 +10,9 @@ from sqlalchemy.exc import IntegrityError
 from starlette.middleware.sessions import SessionMiddleware  # required by google oauth
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from api.core.config import settings
-from api.utils.logger import logger
-from api.v1.routes.main import main_router
+from app.core.config import settings
+from app.utils.logger import logger
+from app.api.v1 import main_router
 
 
 @asynccontextmanager
