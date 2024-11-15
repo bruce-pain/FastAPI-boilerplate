@@ -29,11 +29,6 @@ class Settings(BaseSettings):
     STATIC_DIR: str = os.path.join(BASE_DIR, "static")
     TEMPLATES_DIR: str = os.path.join(BASE_DIR, "templates")
 
-    # Google Oauth
-    GOOGLE_CLIENT_ID: str
-    GOOGLE_CLIENT_SECRET: str
-    GOOGLE_REDIRECT_URL: str
-
     @property
     def database_url(self) -> str:
         """Dynamically construct DATABASE_URL"""

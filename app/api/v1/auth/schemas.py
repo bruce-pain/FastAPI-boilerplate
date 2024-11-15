@@ -1,18 +1,16 @@
 from typing import Annotated, Optional
 
-from pydantic import BaseModel, EmailStr, StringConstraints
+from pydantic import BaseModel, StringConstraints
 from app.core.base.schema import BaseResponseModel
 
 
 class RegisterRequest(BaseModel):
-    email: EmailStr
     password: Optional[str] = None
-    first_name: Annotated[str, StringConstraints(max_length=70)]
-    last_name: Annotated[str, StringConstraints(max_length=70)]
+    username: Annotated[str, StringConstraints(max_length=70)]
 
 
 class LoginRequest(BaseModel):
-    email: EmailStr
+    username: str
     password: str
 
 
@@ -26,9 +24,7 @@ class TokenRefreshResponse(BaseResponseModel):
 
 class AuthResponseData(BaseModel):
     id: str
-    email: EmailStr
-    first_name: str
-    last_name: str
+    username: str
 
 
 class AuthResponse(BaseResponseModel):
