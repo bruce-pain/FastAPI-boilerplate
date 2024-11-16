@@ -29,7 +29,7 @@ source /path/to/venv/bin/activate`
 - Start server.
 
 ```sh
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ### Setup database
@@ -60,6 +60,6 @@ alembic upgrade head
 alembic revision --autogenerate -m "Migration messge"
 ```
 
-After creating new tables, or adding new models. Make sure you import the new model properly in th 'api/v1/models/**init**.py file
+After creating new tables, or adding new models. Make sure you import the new model properly in th 'app/api/models/**__init__**.py file
 
 After importing it in the init file, you don't need to import it in the /alembic/env.py file anymore
