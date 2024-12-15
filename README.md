@@ -4,29 +4,35 @@
 
 ### Clone your repo
 
-- clone your repository after creating it with this template
+- Clone your repository after creating it with this template.
 
-### Start up the fastapi server
+### Start up the FastAPI server
 
-- Create a virtual environment.
-
-```sh
-python3 -m venv .venv
-```
-
-- Activate virtual environment.
+- Install Poetry:
 
 ```sh
-source /path/to/venv/bin/activate`
+curl -sSL https://install.python-poetry.org | python3 -
 ```
 
-- Install project dependencies `pip install -r requirements.txt`
+- Install project dependencies using Poetry:
 
-- Create a .env file by copying the .env.sample file
+```sh
+poetry install
+```
 
-`cp .env.sample .env`
+- Activate the virtual environment managed by Poetry:
 
-- Start server.
+```sh
+poetry shell
+```
+
+- Create a `.env` file by copying the `.env.sample` file:
+
+```sh
+cp .env.sample .env
+```
+
+- Start the server:
 
 ```sh
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
@@ -54,12 +60,12 @@ alembic upgrade head
 ```
 
 - **Adding tables and columns to models**
-  After creating new tables, or adding new models. Make sure to run
+  After creating new tables or adding new models, make sure to run:
 
 ```bash
-alembic revision --autogenerate -m "Migration messge"
+alembic revision --autogenerate -m "Migration message"
 ```
 
-After creating new tables, or adding new models. Make sure you import the new model properly in th 'app/api/models/**__init__**.py file
+After creating new tables or adding new models, make sure you import the new model properly in the `app/api/models/__init__.py` file.
 
-After importing it in the init file, you don't need to import it in the /alembic/env.py file anymore
+After importing it in the `__init__.py` file, you don't need to import it in the `/alembic/env.py` file anymore.

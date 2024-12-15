@@ -1,14 +1,11 @@
 from fastapi import APIRouter, Depends, status, Request, HTTPException
 from sqlalchemy.orm import Session
 from typing import Annotated
-from authlib.integrations.base_client import OAuthError
-from authlib.oauth2.rfc6749 import OAuth2Token
 
 from app.core import response_messages
 from app.db.database import get_db
 from app.utils import jwt_helpers
 from app.core.dependencies.security import get_current_user
-from app.core.config import settings
 
 from app.api.v1.auth import schemas, services
 from app.api.models.user import User
