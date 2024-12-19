@@ -39,5 +39,17 @@ jobs:
 
       # Run tests
       - name: Run Pytest
+        env:
+          ENVIRONMENT: ${{secrets.ENVIRONMENT}}
+          DATABASE_TYPE: ${{secrets.DATABASE_TYPE}}
+          DATABASE_NAME: ${{secrets.DATABASE_NAME}}
+          DATABASE_USER: ${{secrets.DATABASE_USER}}
+          DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+          DATABASE_HOST: ${{secrets.DATABASE_HOST}}
+          DATABASE_PORT: ${{secrets.DATABASE_PORT}}
+          SECRET_KEY: ${{secrets.SECRET_KEY}}
+          ALGORITHM: ${{secrets.ALGORITHM}}
+          ACCESS_TOKEN_EXPIRY: ${{secrets.ACCESS_TOKEN_EXPIRY}}
+          REFRESH_TOKEN_EXPIRY: ${{secrets.REFRESH_TOKEN_EXPIRY}}
         run: |
           poetry run pytest
