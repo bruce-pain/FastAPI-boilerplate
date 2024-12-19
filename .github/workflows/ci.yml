@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  ci-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      # Install Poetry
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "export PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
+
+      # Install dependencies
+      - name: Install dependencies
+        run: |
+          poetry install --with dev
+
+      # Run Ruff
+      - name: Run Ruff
+        run: |
+          poetry run ruff check . --output-format=github
+
+      # Run tests
+      - name: Run Pytest
+        env:
+          ENVIRONMENT: ${{secrets.ENVIRONMENT}}
+          DATABASE_TYPE: ${{secrets.DATABASE_TYPE}}
+          DATABASE_NAME: ${{secrets.DATABASE_NAME}}
+          DATABASE_USER: ${{secrets.DATABASE_USER}}
+          DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+          DATABASE_HOST: ${{secrets.DATABASE_HOST}}
+          DATABASE_PORT: ${{secrets.DATABASE_PORT}}
+          SECRET_KEY: ${{secrets.SECRET_KEY}}
+          ALGORITHM: ${{secrets.ALGORITHM}}
+          ACCESS_TOKEN_EXPIRY: ${{secrets.ACCESS_TOKEN_EXPIRY}}
+          REFRESH_TOKEN_EXPIRY: ${{secrets.REFRESH_TOKEN_EXPIRY}}
+        run: |
+          poetry run pytest

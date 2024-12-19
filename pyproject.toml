@@ -18,6 +18,10 @@ pydantic-settings = "^2.7.0"
 uuid7 = "^0.1.0"
 
 
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.8.3"
+pytest = "^8.3.4"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
