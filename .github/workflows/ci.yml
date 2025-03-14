@@ -9,6 +9,8 @@ on:
 jobs:
   ci-pipeline:
     runs-on: ubuntu-latest
+    # env:
+    #   ENV: ${{ secrets.ENV }}
 
     steps:
       # Checkout code
@@ -32,24 +34,20 @@ jobs:
         run: |
           poetry install --with dev --no-root
 
+      # - name: Decode and create .env file
+      #   run: |
+      #     echo $ENV | base64 -d > .env
+
+      # - name: Run migrations
+      #   run: |
+      #     poetry run alembic upgrade head
+
       # Run Ruff
       - name: Run Ruff
         run: |
-          poetry run ruff check . --output-format=github
+          poetry run ruff check ./app ./tests --output-format=github
 
       # Run tests
       - name: Run Pytest
-        env:
-          ENVIRONMENT: ${{secrets.ENVIRONMENT}}
-          DATABASE_TYPE: ${{secrets.DATABASE_TYPE}}
-          DATABASE_NAME: ${{secrets.DATABASE_NAME}}
-          DATABASE_USER: ${{secrets.DATABASE_USER}}
-          DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
-          DATABASE_HOST: ${{secrets.DATABASE_HOST}}
-          DATABASE_PORT: ${{secrets.DATABASE_PORT}}
-          SECRET_KEY: ${{secrets.SECRET_KEY}}
-          ALGORITHM: ${{secrets.ALGORITHM}}
-          ACCESS_TOKEN_EXPIRY: ${{secrets.ACCESS_TOKEN_EXPIRY}}
-          REFRESH_TOKEN_EXPIRY: ${{secrets.REFRESH_TOKEN_EXPIRY}}
         run: |
-          poetry run pytest
+          poetry run pytest -v --disable-warnings
