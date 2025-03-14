@@ -7,6 +7,8 @@ from app.api.models.user import User
 from app.db.database import get_db
 from app.utils.jwt_helpers import verify_jwt_token
 from app.core import response_messages
+from app.utils.logger import logger
+
 
 
 oauth_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")

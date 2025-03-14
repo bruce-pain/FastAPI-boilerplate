@@ -67,6 +67,8 @@ async def probe():
 async def http_exception(request: Request, exc: HTTPException):
     """HTTP exception handler"""
 
+    logger.error(f"HTTP Exception occured; {exc}")
+
     return JSONResponse(
         status_code=exc.status_code,
         content={
@@ -86,6 +88,8 @@ async def validation_exception(request: Request, exc: RequestValidationError):
         for error in exc.errors()
     ]
 
+    logger.error(f"Validation Exception occured; {errors}")
+
     return JSONResponse(
         status_code=422,
         content={
@@ -101,7 +105,7 @@ async def validation_exception(request: Request, exc: RequestValidationError):
 async def integrity_exception(request: Request, exc: IntegrityError):
     """Integrity error exception handlers"""
 
-    logger.error(f"Exception occured; {exc}")
+    logger.error(f"Integrity Exception occured; {exc}")
 
     return JSONResponse(
         status_code=400,

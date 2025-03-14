@@ -2,7 +2,9 @@
 
 from sqlalchemy.orm import sessionmaker, scoped_session, declarative_base
 from sqlalchemy import create_engine
+
 from app.core.config import settings
+from app.utils.logger import logger
 
 DATABASE_URL = settings.database_url
 
@@ -24,7 +26,7 @@ def get_db():
     try:
         yield db
     except Exception as e:
-        print(f"Database Error: {e}")
+        logger.error(f"Database Error: {e}")
         raise
     finally:
         db.close()
