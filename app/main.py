@@ -101,7 +101,7 @@ async def validation_exception(request: Request, exc: RequestValidationError):
 async def integrity_exception(request: Request, exc: IntegrityError):
     """Integrity error exception handlers"""
 
-    logger.exception(f"Exception occured; {exc}")
+    logger.error(f"Exception occured; {exc}")
 
     return JSONResponse(
         status_code=400,
@@ -117,7 +117,7 @@ async def integrity_exception(request: Request, exc: IntegrityError):
 async def exception(request: Request, exc: Exception):
     """Other exception handlers"""
 
-    logger.exception(f"Exception occured; {exc}")
+    logger.error(f"Exception occured; {exc}")
 
     return JSONResponse(
         status_code=500,
@@ -132,6 +132,8 @@ async def exception(request: Request, exc: Exception):
 @app.exception_handler(RateLimitExceeded)
 async def custom_rate_limit_handler(request: Request, exc: RateLimitExceeded):
     """Rate limit exceeded exception handler"""
+
+    logger.error(f"Rate limit exceeded! {exc}")
 
     return JSONResponse(
         status_code=429,
