@@ -6,7 +6,11 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.exc import IntegrityError
-from starlette.middleware.sessions import SessionMiddleware  # required by google oauth
+from starlette.middleware.sessions import SessionMiddleware
+
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 from app.core.config import settings
 from app.utils.logger import logger
@@ -20,6 +24,8 @@ async def lifespan(app: FastAPI):
     logger.info("Application shutdown")
 
 
+limiter = Limiter(key_func=get_remote_address)
+
 app = FastAPI(
     title="Boilerplate",
     description="FastAPI Boilerplate Application",
@@ -27,6 +33,8 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(SessionMiddleware, secret_key=settings.SECRET_KEY)
 app.add_middleware(
@@ -41,6 +49,7 @@ app.include_router(main_router)
 
 
 @app.get("/", tags=["Home"])
+@limiter.limit("5/minute")
 async def get_root(request: Request) -> dict:
     return JSONResponse(
         status_code=status.HTTP_200_OK,
@@ -116,6 +125,20 @@ async def exception(request: Request, exc: Exception):
             "status": False,
             "status_code": 500,
             "message": f"An unexpected error occurred: {exc}",
+        },
+    )
+
+
+@app.exception_handler(RateLimitExceeded)
+async def custom_rate_limit_handler(request: Request, exc: RateLimitExceeded):
+    """Rate limit exceeded exception handler"""
+
+    return JSONResponse(
+        status_code=429,
+        content={
+            "status": False,
+            "status_code": exc.status_code,
+            "message": "Too many requests. Please try again in 60 seconds.",
         },
     )
 
