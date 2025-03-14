@@ -1,5 +1,4 @@
 import uvicorn
-from collections import defaultdict
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, status
 from fastapi import HTTPException, Request
@@ -8,7 +7,6 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.exc import IntegrityError
 from starlette.middleware.sessions import SessionMiddleware  # required by google oauth
-from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.core.config import settings
 from app.utils.logger import logger
@@ -17,41 +15,17 @@ from app.api.v1 import main_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    logger.info("Application started")
     yield
+    logger.info("Application shutdown")
 
 
-app = FastAPI(lifespan=lifespan, title="Boilerplate")
-
-# In-memory request counter by endpoint and IP address
-request_counter = defaultdict(lambda: defaultdict(int))
-
-
-# Middleware to track request counts and IP addresses
-class RequestCountMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):
-        endpoint = request.url.path
-        ip_address = request.client.host
-        request_counter[endpoint][ip_address] += 1
-        response = await call_next(request)
-        return response
-
-
-app.add_middleware(RequestCountMiddleware)
-app.include_router(main_router)
-
-
-# Endpoint to get request stats
-@app.get("/request-stats", response_class=JSONResponse)
-async def get_request_stats():
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content={
-            "request_counts": {
-                endpoint: dict(ips) for endpoint, ips in request_counter.items()
-            },
-            "message": "endpoints request retreived successfully",
-        },
-    )
+app = FastAPI(
+    title="Boilerplate",
+    description="FastAPI Boilerplate Application",
+    version="1.0.0",
+    lifespan=lifespan,
+)
 
 
 app.add_middleware(SessionMiddleware, secret_key=settings.SECRET_KEY)
@@ -62,6 +36,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(main_router)
 
 
 @app.get("/", tags=["Home"])
