@@ -9,8 +9,8 @@ on:
 jobs:
   ci-pipeline:
     runs-on: ubuntu-latest
-    # env:
-    #   ENV: ${{ secrets.ENV }}
+    env:
+      ENV: ${{ secrets.ENV }}
 
     steps:
       # Checkout code
@@ -34,9 +34,9 @@ jobs:
         run: |
           poetry install --with dev --no-root
 
-      # - name: Decode and create .env file
-      #   run: |
-      #     echo $ENV | base64 -d > .env
+      - name: Decode and create .env file
+        run: |
+          echo $ENV | base64 -d > .env
 
       # - name: Run migrations
       #   run: |
