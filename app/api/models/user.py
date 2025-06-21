@@ -8,6 +8,7 @@ class User(BaseTableModel):
     __tablename__ = "users"
 
     username = Column(String, unique=True, nullable=False)
+    email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=True)
 
     def __str__(self):
