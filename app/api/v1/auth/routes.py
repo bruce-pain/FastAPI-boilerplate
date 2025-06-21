@@ -2,12 +2,12 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 from typing import Annotated
 
-from app.core import response_messages
 from app.db.database import get_db
 from app.utils import jwt_helpers
 from app.core.dependencies.security import get_current_user
 
-from app.api.v1.auth import schemas, services
+from app.api.v1.auth import schemas
+from app.api.services.user import UserService
 from app.api.models.user import User
 
 auth = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -34,17 +34,21 @@ def register(
 
     # Create user account
 
-    user = services.register(db=db, schema=schema)
+    service = UserService(db=db)
+
+    user = service.register(db=db, schema=schema)
 
     # Create access and refresh tokens
     access_token = jwt_helpers.create_jwt_token("access", user.id)
     refresh_token = jwt_helpers.create_jwt_token("refresh", user.id)
 
-    response_data = schemas.AuthResponseData(id=user.id, username=user.username)
+    response_data = schemas.AuthResponseData(
+        id=user.id, username=user.username, email=user.email
+    )
 
     return schemas.AuthResponse(
         status_code=status.HTTP_201_CREATED,
-        message=response_messages.REGISTER_SUCCESSFUL,
+        message="User registered successfully",
         access_token=access_token,
         refresh_token=refresh_token,
         data=response_data,
@@ -70,17 +74,21 @@ def login(
         db (Annotated[Session, Depends): Database session
     """
 
-    user = services.authenticate(db=db, schema=schema)
+    service = UserService(db=db)
+
+    user = service.authenticate(db=db, schema=schema)
 
     # Create access and refresh tokens
     access_token = jwt_helpers.create_jwt_token("access", user.id)
     refresh_token = jwt_helpers.create_jwt_token("refresh", user.id)
 
-    response_data = schemas.AuthResponseData(id=user.id, username=user.username)
+    response_data = schemas.AuthResponseData(
+        id=user.id, username=user.username, email=user.email
+    )
 
     return schemas.AuthResponse(
         status_code=status.HTTP_201_CREATED,
-        message=response_messages.REGISTER_SUCCESSFUL,
+        message="User logged in successfully",
         access_token=access_token,
         refresh_token=refresh_token,
         data=response_data,
@@ -108,17 +116,26 @@ def refresh_token(schema: schemas.TokenRefreshRequest):
 
     return schemas.TokenRefreshResponse(
         status_code=status.HTTP_200_OK,
-        message=response_messages.TOKEN_REFRESH_SUCCESSFUL,
+        message="Access token refreshed successfully",
         access_token=token,
     )
 
 
-@auth.get("/greet/user")
-def greet(current_user: Annotated[User, Depends(get_current_user)]):
-    """Protected route to greet the current user
+@auth.get(
+    path="/user",
+    response_model=schemas.UserResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Get user details",
+    description="This endpoint retrieves the details of the logged-in user",
+    tags=["Authentication"],
+)
+def get_user(current_user: Annotated[User, Depends(get_current_user)]):
+    user_schema = schemas.AuthResponseData(
+        id=current_user.id, username=current_user.username, email=current_user.email
+    )
 
-    Args:
-        current_user (Annotated[User, Depends): The currently logged in user
-    """
-
-    return {"greeting": f"Hello, {current_user.username}!"}
+    return schemas.UserResponse(
+        status_code=status.HTTP_200_OK,
+        message="User Details Retrieved",
+        data=user_schema,
+    )

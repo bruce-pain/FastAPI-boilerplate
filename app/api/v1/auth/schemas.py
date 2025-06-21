@@ -1,4 +1,4 @@
-from typing import Annotated, Optional
+from typing import Annotated
 
 from pydantic import BaseModel, StringConstraints, EmailStr
 from app.core.base.schema import BaseResponseModel
