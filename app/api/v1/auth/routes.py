@@ -1,14 +1,14 @@
-from fastapi import APIRouter, Depends, status
-from sqlalchemy.orm import Session
 from typing import Annotated
 
+from fastapi import APIRouter, Depends, status
+from sqlalchemy.orm import Session
+
+from app.api.models.user import User
+from app.api.services.user import UserService
+from app.api.v1.auth import schemas
+from app.core.dependencies.security import get_current_user
 from app.db.database import get_db
 from app.utils import jwt_helpers
-from app.core.dependencies.security import get_current_user
-
-from app.api.v1.auth import schemas
-from app.api.services.user import UserService
-from app.api.models.user import User
 
 auth = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -36,15 +36,13 @@ def register(
 
     service = UserService(db=db)
 
-    user = service.register(db=db, schema=schema)
+    user = service.register(schema=schema)
 
     # Create access and refresh tokens
     access_token = jwt_helpers.create_jwt_token("access", user.id)
     refresh_token = jwt_helpers.create_jwt_token("refresh", user.id)
 
-    response_data = schemas.AuthResponseData(
-        id=user.id, username=user.username, email=user.email
-    )
+    response_data = schemas.AuthResponseData(id=user.id, email=user.email)
 
     return schemas.AuthResponse(
         status_code=status.HTTP_201_CREATED,
@@ -76,15 +74,13 @@ def login(
 
     service = UserService(db=db)
 
-    user = service.authenticate(db=db, schema=schema)
+    user = service.authenticate(schema=schema)
 
     # Create access and refresh tokens
     access_token = jwt_helpers.create_jwt_token("access", user.id)
     refresh_token = jwt_helpers.create_jwt_token("refresh", user.id)
 
-    response_data = schemas.AuthResponseData(
-        id=user.id, username=user.username, email=user.email
-    )
+    response_data = schemas.AuthResponseData(id=user.id, email=user.email)
 
     return schemas.AuthResponse(
         status_code=status.HTTP_201_CREATED,
@@ -130,9 +126,7 @@ def refresh_token(schema: schemas.TokenRefreshRequest):
     tags=["Authentication"],
 )
 def get_user(current_user: Annotated[User, Depends(get_current_user)]):
-    user_schema = schemas.AuthResponseData(
-        id=current_user.id, username=current_user.username, email=current_user.email
-    )
+    user_schema = schemas.AuthResponseData(id=current_user.id, email=current_user.email)
 
     return schemas.UserResponse(
         status_code=status.HTTP_200_OK,

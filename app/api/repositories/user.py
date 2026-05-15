@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
-from app.core.base.repository import BaseRepository
+
 from app.api.models.user import User
+from app.core.base.repository import BaseRepository
 
 
 class UserRepository(BaseRepository[User]):
@@ -14,7 +15,7 @@ class UserRepository(BaseRepository[User]):
 
     def __init__(self, db: Session):
         super().__init__(User, db)
-    
+
     def get_by_email(self, email: str) -> User:
         """Get a user by email.
 

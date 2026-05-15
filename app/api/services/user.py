@@ -1,10 +1,10 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.utils import password_utils
-from app.api.v1.auth import schemas
 from app.api.models.user import User
 from app.api.repositories.user import UserRepository
+from app.api.v1.auth import schemas
+from app.utils import password_utils
 from app.utils.logger import logger
 
 
