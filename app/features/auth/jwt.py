@@ -1,9 +1,10 @@
 from datetime import datetime, timedelta
 
-from app.core.config import settings
-from app.core import response_messages
 from fastapi import HTTPException
 from jose import JWTError, jwt
+
+from app.core import response_messages
+from app.core.config import settings
 
 
 def create_jwt_token(token_type: str, user_id: str) -> str:
@@ -26,7 +27,7 @@ def verify_jwt_token(token: str, credentials_exception: HTTPException) -> str:
         payload = jwt.decode(
             token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
         )
-        user_id: str = payload.get("user_id")
+        user_id: str | None = payload.get("user_id")
 
         if user_id is None:
             raise credentials_exception
@@ -49,3 +50,4 @@ def refresh_access_token(refresh_token: str) -> str:
     if user_id:
         new_access_token = create_jwt_token("access", user_id=user_id)
         return new_access_token
+
