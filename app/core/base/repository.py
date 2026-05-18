@@ -1,4 +1,5 @@
-from typing import Generic, TypeVar, Type, Optional, List
+from typing import Generic, List, Optional, Type, TypeVar
+
 from sqlalchemy.orm import Session
 
 from app.core.base.model import BaseTableModel

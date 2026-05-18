@@ -1,7 +1,7 @@
 """The database module"""
 
-from sqlalchemy.orm import sessionmaker, scoped_session, declarative_base
 from sqlalchemy import create_engine
+from sqlalchemy.orm import declarative_base, scoped_session, sessionmaker
 
 from app.core.config import settings
 from app.core.logger import logger

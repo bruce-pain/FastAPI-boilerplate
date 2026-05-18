@@ -12,8 +12,8 @@ from sqlalchemy.exc import IntegrityError
 from starlette.middleware.sessions import SessionMiddleware
 
 from app.core.config import settings
-from app.features.router import main_router
 from app.core.logger import logger
+from app.features.router import main_router
 
 
 @asynccontextmanager
