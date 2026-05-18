@@ -1,20 +1,19 @@
-import uvicorn
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, status
-from fastapi import HTTPException, Request
+
+import uvicorn
+from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
 from sqlalchemy.exc import IntegrityError
 from starlette.middleware.sessions import SessionMiddleware
 
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.util import get_remote_address
-from slowapi.errors import RateLimitExceeded
-
 from app.core.config import settings
-from app.utils.logger import logger
-from app.api.v1 import main_router
+from app.features.router import main_router
+from app.core.logger import logger
 
 
 @asynccontextmanager
@@ -34,7 +33,6 @@ app = FastAPI(
     docs_url="/v1/docs",
     redoc_url="/v1/redoc",
     openapi_url="/v1/openapi.json",
-
 )
 
 app.state.limiter = limiter
@@ -54,7 +52,7 @@ app.include_router(main_router)
 
 @app.get("/", tags=["Home"])
 @limiter.limit("5/minute")
-async def get_root(request: Request) -> dict:
+async def get_root(request: Request) -> JSONResponse:
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content={"URL": "", "message": "Welcome to the boilerplate API"},

@@ -12,4 +12,4 @@ class User(BaseTableModel):
     password = Column(String, nullable=True)
 
     def __str__(self):
-        return "User: {}".format(self.username)
+        return "User: {}".format(self.email)

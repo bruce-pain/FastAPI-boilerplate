@@ -1,7 +1,7 @@
 """This is the Base Model Class"""
 
 from uuid_extensions import uuid7
-from app.db.database import Base
+from app.core.database import Base
 from sqlalchemy import Column, String, DateTime, func
 
 

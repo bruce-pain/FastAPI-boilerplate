@@ -36,4 +36,3 @@ class AuthResponse(BaseResponseModel):
 
 class UserResponse(BaseResponseModel):
     data: AuthResponseData
-

@@ -3,11 +3,10 @@ from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import Annotated
 
-from app.api.models.user import User
-from app.db.database import get_db
-from app.utils.jwt_helpers import verify_jwt_token
+from app.features.auth.models import User
+from app.core.database import get_db
+from app.features.auth.jwt import verify_jwt_token
 from app.core import response_messages
-
 
 
 oauth_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
@@ -28,7 +27,6 @@ def get_current_user(
     Returns:
         User: Logged in User object
     """
-
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail=response_messages.INVALID_CREDENTIALS,
@@ -45,3 +43,4 @@ def get_current_user(
         raise credentials_exception
 
     return user
+

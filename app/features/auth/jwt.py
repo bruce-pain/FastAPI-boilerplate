@@ -7,8 +7,6 @@ from jose import JWTError, jwt
 
 
 def create_jwt_token(token_type: str, user_id: str) -> str:
-    """Function to create an access token"""
-
     expiry_period = {
         "access": settings.ACCESS_TOKEN_EXPIRY,
         "refresh": settings.REFRESH_TOKEN_EXPIRY,
@@ -24,8 +22,6 @@ def create_jwt_token(token_type: str, user_id: str) -> str:
 
 
 def verify_jwt_token(token: str, credentials_exception: HTTPException) -> str:
-    """Funtcion to decode and verify access and refresh tokens"""
-
     try:
         payload = jwt.decode(
             token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
@@ -42,14 +38,6 @@ def verify_jwt_token(token: str, credentials_exception: HTTPException) -> str:
 
 
 def refresh_access_token(refresh_token: str) -> str:
-    """Refresh access token with the refresh token
-
-    Args:
-        refresh_token (str): The refresh token
-
-    Returns:
-        str: The new access token
-    """
     credentials_exception = HTTPException(
         status_code=401, detail=response_messages.EXPIRED_REFRESH_TOKEN
     )
@@ -60,5 +48,4 @@ def refresh_access_token(refresh_token: str) -> str:
 
     if user_id:
         new_access_token = create_jwt_token("access", user_id=user_id)
-
         return new_access_token

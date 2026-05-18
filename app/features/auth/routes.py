@@ -3,17 +3,18 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
-from app.api.models.user import User
-from app.api.services.user import UserService
-from app.api.v1.auth import schemas
+from app.features.auth.models import User
+from app.features.auth.service import UserService
+from app.features.auth import schemas
 from app.core.dependencies.security import get_current_user
-from app.db.database import get_db
-from app.utils import jwt_helpers
-
-auth = APIRouter(prefix="/auth", tags=["Authentication"])
+from app.core.database import get_db
+from app.features.auth.jwt import create_jwt_token, refresh_access_token
 
 
-@auth.post(
+auth_router = APIRouter(prefix="/auth", tags=["Authentication"])
+
+
+@auth_router.post(
     path="/register",
     status_code=status.HTTP_201_CREATED,
     response_model=schemas.AuthResponse,
@@ -25,22 +26,12 @@ def register(
     schema: schemas.RegisterRequest,
     db: Annotated[Session, Depends(get_db)],
 ):
-    """Endpoint for a user to register their account
-
-    Args:
-    schema (schemas.LoginRequest): Login request schema
-    db (Annotated[Session, Depends): Database session
-    """
-
-    # Create user account
-
     service = UserService(db=db)
 
     user = service.register(schema=schema)
 
-    # Create access and refresh tokens
-    access_token = jwt_helpers.create_jwt_token("access", user.id)
-    refresh_token = jwt_helpers.create_jwt_token("refresh", user.id)
+    access_token = create_jwt_token("access", user.id)
+    refresh_token = create_jwt_token("refresh", user.id)
 
     response_data = schemas.AuthResponseData(id=user.id, email=user.email)
 
@@ -53,7 +44,7 @@ def register(
     )
 
 
-@auth.post(
+@auth_router.post(
     path="/login",
     status_code=status.HTTP_200_OK,
     response_model=schemas.AuthResponse,
@@ -65,20 +56,12 @@ def login(
     schema: schemas.LoginRequest,
     db: Annotated[Session, Depends(get_db)],
 ):
-    """Endpoint for user login
-
-    Args:
-        schema (schemas.LoginRequest): Login request schema
-        db (Annotated[Session, Depends): Database session
-    """
-
     service = UserService(db=db)
 
     user = service.authenticate(schema=schema)
 
-    # Create access and refresh tokens
-    access_token = jwt_helpers.create_jwt_token("access", user.id)
-    refresh_token = jwt_helpers.create_jwt_token("refresh", user.id)
+    access_token = create_jwt_token("access", user.id)
+    refresh_token = create_jwt_token("refresh", user.id)
 
     response_data = schemas.AuthResponseData(id=user.id, email=user.email)
 
@@ -91,7 +74,7 @@ def login(
     )
 
 
-@auth.post(
+@auth_router.post(
     path="/token/refresh",
     response_model=schemas.TokenRefreshResponse,
     status_code=status.HTTP_200_OK,
@@ -100,15 +83,7 @@ def login(
     tags=["Authentication"],
 )
 def refresh_token(schema: schemas.TokenRefreshRequest):
-    """Endpoint to refresh the access token
-
-    Args:
-        schema (schemas.TokenRefreshRequest): Refresh Token Schema
-
-    Returns:
-        _type_: Refresh Token Response
-    """
-    token = jwt_helpers.refresh_access_token(refresh_token=schema.refresh_token)
+    token = refresh_access_token(refresh_token=schema.refresh_token)
 
     return schemas.TokenRefreshResponse(
         status_code=status.HTTP_200_OK,
@@ -117,7 +92,7 @@ def refresh_token(schema: schemas.TokenRefreshRequest):
     )
 
 
-@auth.get(
+@auth_router.get(
     path="/user",
     response_model=schemas.UserResponse,
     status_code=status.HTTP_200_OK,
