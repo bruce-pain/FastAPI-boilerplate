@@ -1,4 +1,4 @@
-.PHONY: help run install migrate upgrade downgrade test lint format
+.PHONY: help run install migrate upgrade downgrade test lint format clean
 .DEFAULT_GOAL := help
 
 help:  ## Show this help message
@@ -28,3 +28,9 @@ lint:  ## Check code for linting errors
 
 format:  ## Format codebase
 	uv run ruff format app/
+
+clean:  ## Remove all cache and generated files
+	find . -type f -name "*.pyc" -delete
+	find . -type d -name "__pycache__" -exec rm -rf {} +
+	find . -type d -name ".pytest_cache" -exec rm -rf {} +
+	find . -type d -name ".ruff_cache" -exec rm -rf {} +
