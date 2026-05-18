@@ -24,7 +24,7 @@ test:  ## Run test suite
 	uv run pytest tests/ -v
 
 lint:  ## Check code for linting errors
-	uv run ruff check app/
+	uv run ruff check ./app/ ./tests/
 
 format:  ## Format codebase
 	uv run ruff format app/

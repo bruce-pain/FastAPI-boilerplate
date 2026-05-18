@@ -13,41 +13,29 @@ jobs:
       ENV: ${{ secrets.ENV }}
 
     steps:
-      # Checkout code
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # Set up Python
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      # Install Poetry
-      - name: Install Poetry
-        run: |
-          curl -sSL https://install.python-poetry.org | python3 -
-          echo "export PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
-
-      # Install dependencies
-      - name: Install dependencies
-        run: |
-          poetry install --with dev --no-root
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
 
       - name: Decode and create .env file
-        run: |
-          echo $ENV | base64 -d > .env
+        run: echo $ENV | base64 -d > .env
+
+      - name: Install dependencies
+        run: make install
 
       # - name: Run migrations
-      #   run: |
-      #     poetry run alembic upgrade head
+      #   run: make upgrade
 
-      # Run Ruff
       - name: Run Ruff
-        run: |
-          poetry run ruff check ./app ./tests --output-format=github
+        run: make lint
 
-      # Run tests
       - name: Run Pytest
-        run: |
-          poetry run pytest -v --disable-warnings
+        run: make test
+
