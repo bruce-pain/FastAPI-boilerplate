@@ -27,7 +27,7 @@ lint:  ## Check code for linting errors
 	uv run ruff check ./app/ ./tests/
 
 format:  ## Format codebase
-	uv run ruff format app/
+	uv run ruff format ./app/ ./tests/
 
 clean:  ## Remove all cache and generated files
 	find . -type f -name "*.pyc" -delete

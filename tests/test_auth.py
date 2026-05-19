@@ -112,4 +112,3 @@ class TestGetUser:
             "/api/v1/auth/user", headers={"Authorization": "Bearer invalid-token"}
         )
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
-
