@@ -14,4 +14,3 @@ class User(BaseTableModel):
 
     def __str__(self):
         return "User: {}".format(self.email)
-
