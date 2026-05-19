@@ -1,4 +1,5 @@
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
+from typing import Optional
 
 from fastapi import HTTPException
 from jose import JWTError, jwt
@@ -16,7 +17,7 @@ def create_jwt_token(token_type: str, user_id: str) -> str:
     if token_type not in expiry_period.keys():
         raise ValueError("token_type should be 'access' or 'refresh'")
 
-    expire = datetime.utcnow() + timedelta(hours=expiry_period[token_type])
+    expire = datetime.now(UTC) + timedelta(hours=expiry_period[token_type])
     data = {"user_id": user_id, "exp": expire, "type": token_type}
     encoded_jwt = jwt.encode(data, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return encoded_jwt
@@ -38,7 +39,7 @@ def verify_jwt_token(token: str, credentials_exception: HTTPException) -> str:
     return user_id
 
 
-def refresh_access_token(refresh_token: str) -> str:
+def refresh_access_token(refresh_token: str) -> Optional[str]:
     credentials_exception = HTTPException(
         status_code=401, detail=response_messages.EXPIRED_REFRESH_TOKEN
     )
@@ -50,4 +51,3 @@ def refresh_access_token(refresh_token: str) -> str:
     if user_id:
         new_access_token = create_jwt_token("access", user_id=user_id)
         return new_access_token
-

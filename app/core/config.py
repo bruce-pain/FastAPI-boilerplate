@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # Use this to build paths inside the project
 BASE_DIR = Path(__file__).resolve().parent
@@ -10,6 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent
 class Settings(BaseSettings):
     """Class to hold application's config values."""
 
+    model_config = SettingsConfigDict(env_file=".env")
     SECRET_KEY: str
     ALGORITHM: str
     ENVIRONMENT: str
@@ -33,9 +34,6 @@ class Settings(BaseSettings):
     def database_url(self) -> str:
         """Dynamically construct DATABASE_URL"""
         return f"{self.DATABASE_TYPE}://{self.DATABASE_USER}:{self.DATABASE_PASSWORD}@{self.DATABASE_HOST}:{self.DATABASE_PORT}/{self.DATABASE_NAME}"
-
-    class Config:
-        env_file = ".env"
 
 
 settings = Settings()
